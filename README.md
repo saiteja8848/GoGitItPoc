@@ -1,2 +1,2 @@
 # GoGitItPoc
-Repository created for GitHub Enterprise Cloud POC
+Repository created for GitHub Enterprise Cloud POC.
