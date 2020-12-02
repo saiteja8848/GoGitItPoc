@@ -1,0 +1,77 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Code Coverage
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup msbuild
+        uses: microsoft/setup-msbuild@v1
+      
+      - name: Setup VSTest Path
+        uses: darenm/Setup-VSTest@v1
+      
+      - name: Install dotcover
+        run: choco install dotcover-cli -y
+      
+      - name: Restore nuget packages for the avaiable solutions
+        run: |
+              $solutions=Get-ChildItem $GITHUB_WORKSPACE -recurse -force -filter "*.sln" | Get-Unique
+              foreach ($solution in $solutions)
+              {
+                nuget restore $soluton
+              }
+              
+      
+      - name: Build Solutions
+        run: |
+             $solutions=Get-ChildItem $GITHUB_WORKSPACE -recurse -force -filter "*.sln" | Get-Unique
+             foreach($solution in $solutions)
+             {
+                msbuild $solution
+             }
+              
+      - name: Run CodeCoverage
+        run: | 
+              $files=dir "*.Test\bin\Debug\*.Test.dll" | Get-Unique
+              
+              $testlist="";
+              foreach ($file in $files)
+              { 
+                $testlist+=$file.FullName + " ";
+              }
+              
+              $dotcoverExe=Get-ChildItem dotcover -recurse -force -filter "dotcover.exe" | Get-Unique
+              $vstestExe=Get-Command vstest.console.exe | Select -expandproperty Source
+              Start-Process "dotcover.exe" -ArgumentList "cover /TargetExecutable=`"$vstestExe`" /TargetArguments=`"$testlist`" /TargetWorkingDir=$PWD /Output=`"output/coverage.html`" /ReportType=`"HTML`"" -NoNewWindow -Wait
+              
+     
+      - name: Download CodeCoverage Report
+        uses: actions/upload-artifact@v2
+        with:
+           name: CodeCoverage
+           path: output 
+      

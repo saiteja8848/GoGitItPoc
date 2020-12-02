@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup msbuild
+        uses: microsoft/setup-msbuild@v1
+      
+      - name: Setup VSTest Path
+        uses: darenm/Setup-VSTest@v1
+      
+      - name: Restore nuget packages for the avaiable solutions
+        run: |
+              $solutions=Get-ChildItem $GITHUB_WORKSPACE -recurse -force -filter "*.sln" | Get-Unique
+              foreach ($solution in $solutions)
+              {
+                nuget restore $soluton
+              }
+              
+      
+      - name: Build Solutions
+        run: |
+             $solutions=Get-ChildItem $GITHUB_WORKSPACE -recurse -force -filter "*.sln" | Get-Unique
+             foreach($solution in $solutions)
+             {
+                msbuild $solution
+             }
+              
+      - name: Run Unit tests
+        run: | 
+              $files=dir "*.Test\bin\Debug\*.Test.dll" | Get-Unique
+              
+              $testlist="";
+              foreach ($file in $files)
+              { 
+                $testlist+=$file.FullName + " ";
+              }
+              
+              Start-Process "vstest.console.exe" -ArgumentList "$testlist /Parallel /Settings:coverage.runsettings" -NoNewWindow -Wait
+
+      - name: Create nuget package
+        run: nuget pack SampleApp
+
+     # - name: Publish nuget to GitHub registry
+     #   run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/GoGitItPoc --api-key ${{github.token}} --skip-duplicate --no-symbols false
