@@ -34,6 +34,13 @@ jobs:
       - name: Setup VSTest Path
         uses: darenm/Setup-VSTest@v1
       
+      - name: Setup .NET Core @ Latest
+        uses: actions/setup-dotnet@v1
+        with:
+          source-url: https://nuget.pkg.github.com/gvignesh2005/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      
       - name: Restore nuget packages for the avaiable solutions
         run: |
               $solutions=Get-ChildItem $GITHUB_WORKSPACE -recurse -force -filter "*.sln" | Get-Unique
@@ -65,6 +72,6 @@ jobs:
 
       - name: Create nuget package
         run: nuget pack SampleApp
-
-     # - name: Publish nuget to GitHub registry
-     #   run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/GoGitItPoc --api-key ${{github.token}} --skip-duplicate --no-symbols false
+      
+      - name: Publish Nuget to GitHub registry
+        run: dotnet nuget push *.nupkg --skip-duplicate --no-symbols true
