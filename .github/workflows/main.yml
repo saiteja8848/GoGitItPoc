@@ -75,3 +75,20 @@ jobs:
       
       - name: Publish Nuget to GitHub registry
         run: dotnet nuget push *.nupkg --skip-duplicate --no-symbols true
+
+  # This workflow contains a single job called "build"
+  testit:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: 
+        uses: microsoft/setup-msbuild@v1
+      
