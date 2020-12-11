@@ -104,4 +104,4 @@ jobs:
           NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       
       - name: Download Package
-        run: dotnet add PROJECT package SampleApp --version 2.0.0
+        run: dotnet add Algorithms package SampleApp --version 2.0.0
