@@ -25,7 +25,7 @@ namespace SampleApp.Test
 		[TestMethod]
 		public void TestAddOperation()
 		{
-			Calculator calc = new Calculator(1,2);
+			Calculator calc = new Calculator(1,1);
 			Assert.AreEqual(2, calc.Add());
 		}
 	}
