@@ -89,19 +89,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
+      
       - name: Setup msbuild
-        uses: microsoft/setup-msbuild@v1
-      
-      - name: Setup VSTest Path
-        uses: darenm/Setup-VSTest@v1
-      
-      - name: Setup .NET Core @ Latest
-        uses: actions/setup-dotnet@v1
-        with:
-          source-url: https://nuget.pkg.github.com/prgscloud/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      
-      - name: Download Package
-        run: dotnet add Algorithms package SampleApp --version 2.0.0
+        run: echo "Download the package and build your solution"
