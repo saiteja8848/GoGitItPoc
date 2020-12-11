@@ -10,5 +10,3 @@ Repository created for GitHub Enterprise Cloud POC.
 Build Status:
 
 ![CI](https://github.com/prgscloud/GoGitItPoc/workflows/CI/badge.svg)
-
-Test Edit #1
