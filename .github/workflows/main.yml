@@ -68,7 +68,15 @@ jobs:
                 $testlist+=$file.FullName + " ";
               }
               
-              Start-Process "vstest.console.exe" -ArgumentList "$testlist /Parallel /Settings:coverage.runsettings" -NoNewWindow -Wait
+              Start-Process "vstest.console.exe" -ArgumentList "$testlist /Parallel /Settings:coverage.runsettings /Logger:trx" -NoNewWindow -Wait
+
+      - name: Parse the Unit test results
+        uses: NasAmin/trx-parser@v0.0.3
+        id: trx-parser
+        with:
+          TRX_PATH: ${{ github.workspace }}\TestResults
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IGNORE_FAILURE: false
 
       - name: Create nuget package
         run: nuget pack SampleApp
