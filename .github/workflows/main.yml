@@ -71,7 +71,7 @@ jobs:
               Start-Process "vstest.console.exe" -ArgumentList "$testlist /Parallel /Settings:coverage.runsettings /Logger:trx" -NoNewWindow -Wait
 
       - name: Parse the Unit test results
-        uses: NasAmin/trx-parser@v0.0.3
+        uses: NasAmin/trx-parser@v0.0.4
         id: trx-parser
         with:
           TRX_PATH: ${{ github.workspace }}\TestResults
