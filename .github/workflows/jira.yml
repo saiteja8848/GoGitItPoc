@@ -10,13 +10,14 @@ jobs:
   create_comment:
     runs-on: ubuntu-latest
     steps:
+      # https://github.com/actions-ecosystem/action-regex-match
       - uses: actions-ecosystem/action-regex-match@v2
         id: regex-match
         with:
           text: ${{ github.head_ref }}
           regex: 'WUG-[0-9]+'
 
-      # uses this https://github.com/marketplace/actions/webhook-post-action
+      # https://github.com/marketplace/actions/webhook-post-action
       - uses: muinmomin/webhook-action@v1.0.0
         env: 
           REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
@@ -32,8 +33,5 @@ jobs:
         env:
           REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
         run: |
-              echo $GITHUB_REPOSITORY
-              echo $GITHUB_RUN_ID
-              echo $GITHUB_WORKFLOW_URL;
+              echo $GITHUB_WORKFLOW_URL
               echo $JIRA_WEBHOOK_URL_WITH_ISSUE
-              echo $REGEX_MATCH
