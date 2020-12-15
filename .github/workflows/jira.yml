@@ -26,7 +26,7 @@ jobs:
         if: ${{ steps.regex-match.outputs.match != '' }}
         with:
           url: ${{ secrets.JIRA_WEBHOOK_URL }}
-          data: "{'data': 'foo'}"
+          data: '{"data": "foo"}'
       
       - name: Test Step
         env:
