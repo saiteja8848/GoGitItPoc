@@ -100,22 +100,3 @@ jobs:
       
       - name: Setup msbuild
         run: echo "Download the package and build your solution"
-
-  create_comment:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions-ecosystem/action-regex-match@v2
-        id: regex-match
-        with:
-          text: ${{ github.head_ref }}
-          regex: 'WUG-[0-9]+'
-
-      # uses this https://github.com/marketplace/actions/webhook-post-action
-      - uses: muinmomin/webhook-action@v1.0.0
-        env: 
-          JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
-          GITHUB_WORKFLOW_URL: 'https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID' 
-        if: ${{ steps.regex-match.outputs.match != '' }}
-        with:
-          url: ${{ secrets.JIRA_WEBHOOK_URL }}
-          data: "{'data': {'github_build_url': '$GITHUB_WORKFLOW_URL'}}"
