@@ -17,6 +17,16 @@ jobs:
           text: ${{ github.head_ref }}
           regex: 'WUG-[0-9]+'
 
+      - name: Test Step
+        env:
+          REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
+          JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
+          GITHUB_WORKFLOW_URL: 'https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID' 
+        run: |
+              echo $GITHUB_WORKFLOW_URL
+              echo $JIRA_WEBHOOK_URL_WITH_ISSUE
+
+
       # https://github.com/marketplace/actions/webhook-post-action
       - uses: muinmomin/webhook-action@v1.0.0
         env: 
@@ -27,10 +37,4 @@ jobs:
         with:
           url: "$JIRA_WEBHOOK_URL_WITH_ISSUE"
           data: '{"data": {"build_url": "$GITHUB_WORKFLOW_URL"}}'
-      
-      - name: Test Step
-        env:
-          REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
-        run: |
-              echo $GITHUB_WORKFLOW_URL
-              echo $JIRA_WEBHOOK_URL_WITH_ISSUE
+
