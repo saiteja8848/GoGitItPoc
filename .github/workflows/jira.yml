@@ -21,7 +21,7 @@ jobs:
         env:
           REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
           JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
-          GITHUB_WORKFLOW_URL: 'https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}' 
+          GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' 
         run: |
               echo $GITHUB_WORKFLOW_URL
               echo $JIRA_WEBHOOK_URL_WITH_ISSUE
