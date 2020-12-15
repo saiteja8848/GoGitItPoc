@@ -17,12 +17,12 @@ jobs:
           regex: 'WUG-[0-9]+'
 
       # uses this https://github.com/marketplace/actions/webhook-post-action
-       - uses: muinmomin/webhook-action@v1.0.0
+      - uses: muinmomin/webhook-action@v1.0.0
         env: 
           REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
           #JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
           #GITHUB_WORKFLOW_URL: 'https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID' 
-      # if: ${{ steps.regex-match.outputs.match != '' }}
+      #  if: ${{ steps.regex-match.outputs.match != '' }}
         if: $REGEX_MATCH != ''
         with:
           url: ${{ secrets.JIRA_WEBHOOK_URL }}
