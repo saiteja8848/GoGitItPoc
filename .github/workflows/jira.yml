@@ -27,7 +27,9 @@ jobs:
       #    data: "{'data': {'github_build_url': '$GITHUB_WORKFLOW_URL'}}"
       
       - name: Test Step
+        env:
+          REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
         run: |
               echo $GITHUB_WORKFLOW_URL;
               echo $JIRA_WEBHOOK_URL_WITH_ISSUE
-              echo $steps.regex-match.outputs.match
+              echo $REGEX_MATCH
