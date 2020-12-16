@@ -1,0 +1,32 @@
+# This is a basic workflow to make a comment on the Jira issue with the link to the build triggered by  Github Actions 
+name: Post Link in Jira Issue
+
+on:
+  # Triggers the workflow on pull request events to the mater branch
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  create_comment:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions-ecosystem/action-regex-match
+      - name: Find the WUG issue with the branch
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.head_ref }}
+          regex: 'WUG-[0-9]+'
+
+
+      # https://github.com/fjogeleit/http-request-action
+      - name: Send Post Request on Jira
+        uses: fjogeleit/http-request-action@master
+        env: 
+          GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        with:
+          contentType: 'application/json'
+          url: '${{ secrets.JIRA_WEBHOOK_URL }}'
+          method: 'POST'
+          data: '{"issues":["${{ steps.regex-match.outputs.match }}"], "data": {"build_url": "${{ env.GITHUB_WORKFLOW_URL }}"}}'
