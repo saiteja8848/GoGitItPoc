@@ -50,7 +50,7 @@ jobs:
           contentType: 'application/json'
           url: '${{ secrets.JIRA_WEBHOOK_URL }}'
           method: 'POST'
-          data: '{"issues":["${{ steps.regex-match.outputs.match }}"], "data": {"build_url": "${{ GITHUB_WORKFLOW_URL }}"}}'
+          data: '{"issues":["${{ steps.regex-match.outputs.match }}"], "data": {"build_url": "${{ env.GITHUB_WORKFLOW_URL }}"}}'
 
 
 #  --data '{"issues":["WUG-35456"], "data": {"releaseVersion":"AHHHH"}}'
