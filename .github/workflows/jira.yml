@@ -21,21 +21,36 @@ jobs:
         env:
           REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
           JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
-          GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' 
+          GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          REQUEST_PAYLOAD: '{"data": {"build_url": "$GITHUB_WORKFLOW_URL"}}'
         run: |
               echo $GITHUB_WORKFLOW_URL
               echo $JIRA_WEBHOOK_URL_WITH_ISSUE
               echo $GITHUB_REPOSITORY
               echo $GITHUB_RUN_ID
+              echo $REQUEST_PAYLOAD
 
       # https://github.com/marketplace/actions/webhook-post-action
-      - uses: muinmomin/webhook-action@v1.0.0
+      #- uses: muinmomin/webhook-action@v1.0.0
+      #  env: 
+      #    REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
+      #    JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
+      #    GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' 
+      #  if: ${{ steps.regex-match.outputs.match != '' }}
+      #  with:
+      #    url: "$JIRA_WEBHOOK_URL_WITH_ISSUE"
+      #    data: '{"data": {"build_url": "$GITHUB_WORKFLOW_URL"}}'
+
+      - name: Send Post Request on Jira
+        uses: fjogeleit/http-request-action@master
         env: 
           REGEX_MATCH: ${{ steps.regex-match.outputs.match }}
           JIRA_WEBHOOK_URL_WITH_ISSUE: '${{ secrets.JIRA_WEBHOOK_URL }}?issue=${{steps.regex-match.outputs.match}}'
-          GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' 
+          GITHUB_WORKFLOW_URL: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          REQUEST_PAYLOAD: '{"data": {"build_url": "$GITHUB_WORKFLOW_URL"}}'
         if: ${{ steps.regex-match.outputs.match != '' }}
         with:
+          contentType: 'application/json'
           url: "$JIRA_WEBHOOK_URL_WITH_ISSUE"
+          method: 'POST'
           data: '{"data": {"build_url": "$GITHUB_WORKFLOW_URL"}}'
-
